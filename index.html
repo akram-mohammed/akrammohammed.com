@@ -207,6 +207,27 @@
 
     .nav-links a:hover { color: var(--teal-light); }
 
+    .nav-toggle {
+      display: none;
+      background: none;
+      border: 0;
+      cursor: pointer;
+      padding: 0.5rem;
+      width: 44px;
+      height: 44px;
+    }
+    .nav-toggle span {
+      display: block;
+      width: 24px;
+      height: 2px;
+      background: #fff;
+      margin: 5px auto;
+      transition: transform 0.3s ease, opacity 0.3s ease;
+    }
+    .nav-toggle[aria-expanded="true"] span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+    .nav-toggle[aria-expanded="true"] span:nth-child(2) { opacity: 0; }
+    .nav-toggle[aria-expanded="true"] span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
     /* ── HERO ── */
     .hero {
       background: linear-gradient(135deg, var(--navy) 0%, #1a4a6e 50%, #0d3d5c 100%);
@@ -644,8 +665,31 @@
       .about-grid { grid-template-columns: 1fr; }
       .hero-stats { gap: 1rem; }
       nav { padding: 0 1rem; }
-      .nav-links { gap: 1rem; }
       main { padding: 2rem 1rem; }
+    }
+
+    /* ── MOBILE NAV ── */
+    @media (max-width: 768px) {
+      .nav-toggle { display: block; }
+      .nav-links {
+        display: none;
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        flex-direction: column;
+        gap: 0;
+        background: rgba(15,45,78,0.98);
+        padding: 0.5rem 1rem 1rem;
+        box-shadow: 0 8px 24px rgba(0,0,0,0.25);
+      }
+      .nav-links.open { display: flex; }
+      .nav-links a {
+        display: block;
+        width: 100%;
+        padding: 0.85rem 0.25rem;
+        border-bottom: 1px solid rgba(255,255,255,0.08);
+      }
     }
 
     /* ── PRINT ── */
@@ -661,7 +705,10 @@
   <!-- ── NAVIGATION ── -->
   <nav>
     <a class="nav-brand" href="#top">Akram Mohammed, PhD</a>
-    <ul class="nav-links">
+    <button class="nav-toggle" aria-label="Toggle menu" aria-expanded="false" aria-controls="primary-nav">
+      <span></span><span></span><span></span>
+    </button>
+    <ul class="nav-links" id="primary-nav">
       <li><a href="#about">About</a></li>
       <li><a href="#research">Research</a></li>
       <li><a href="#publications">Publications</a></li>
@@ -1415,5 +1462,22 @@
     }
   </script>
 
+  <script>
+    (function () {
+      var btn = document.querySelector('.nav-toggle');
+      var menu = document.querySelector('.nav-links');
+      if (!btn || !menu) return;
+      btn.addEventListener('click', function () {
+        var open = menu.classList.toggle('open');
+        btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+      });
+      menu.addEventListener('click', function (e) {
+        if (e.target.closest('a')) {
+          menu.classList.remove('open');
+          btn.setAttribute('aria-expanded', 'false');
+        }
+      });
+    })();
+  </script>
 </body>
 </html>
